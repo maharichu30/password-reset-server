@@ -50,28 +50,24 @@ export const registerUser = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   try {
-    // Trim email to remove extra spaces
     const email = req.body.email.trim();
 
-    // Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate reset token (plain)
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    // Save token & expiry in DB
+    //save token & expiry in DB
     user.resetToken = resetToken;
     user.resetTokenExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
     await user.save();
 
-    // Reset link (frontend URL)
+  
     const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
-    // ✅ Replace localhost with your frontend URL in production
 
-    // Create transporter
+    //create transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -80,10 +76,9 @@ export const forgotPassword = async (req, res) => {
       },
     });
 
-    // Send single email with a clickable button
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: email, // trimmed email
+      to: email, 
       subject: "Password Reset",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.5;">
@@ -97,8 +92,6 @@ export const forgotPassword = async (req, res) => {
         </div>
       `,
     });
-
-    // Send success response to frontend
     res.json({ message: "Reset email sent successfully!" });
   } catch (error) {
     console.error(error);
@@ -108,7 +101,7 @@ export const forgotPassword = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   try {
-    // Find user by the plain token in DB and check expiry
+    
     const user = await User.findOne({
       resetToken: req.params.token,
       resetTokenExpire: { $gt: Date.now() },
@@ -118,17 +111,17 @@ export const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    // Hash the new password
+    //hash the new password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(req.body.password, salt);
 
-    // Remove reset token after successful reset
+    //remove reset token after successful reset
     user.resetToken = undefined;
     user.resetTokenExpire = undefined;
 
     await user.save();
 
-    // Send success message
+    //send success message
     res.json({ message: "Password reset successful" });
   } catch (error) {
     res.status(500).json({ message: error.message });
