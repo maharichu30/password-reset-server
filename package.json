@@ -1,0 +1,24 @@
+{
+  "name": "password-reset-server",
+  "version": "1.0.0",
+  "description": "password reset server for the password reset flow",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.2.2",
+    "nodemailer": "^8.0.1",
+    "nodemon": "^3.1.14"
+  }
+}
