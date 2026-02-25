@@ -1,6 +1,4 @@
-Sure! Here’s a complete `README.md` ready to copy-paste:
 
-````markdown
 # Password Reset Server
 
 A Node.js backend server for handling user authentication and password reset functionality, built with **Express**, **MongoDB**, and **NodeMailer**.
@@ -9,13 +7,18 @@ A Node.js backend server for handling user authentication and password reset fun
 
 ## Table of Contents
 
-- [Features](#features)  
-- [Tech Stack](#tech-stack)  
-- [Getting Started](#getting-started)  
-- [Environment Variables](#environment-variables)  
-- [API Endpoints](#api-endpoints)  
-- [Folder Structure](#folder-structure)  
-- [License](#license)  
+- [Password Reset Server](#password-reset-server)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
+  - [API Endpoints](#api-endpoints)
+  - [Folder Structure](#folder-structure)
+  - [License](#license)
+  - [How to Test Password Reset Flow (Optional)](#how-to-test-password-reset-flow-optional)
 
 ---
 
