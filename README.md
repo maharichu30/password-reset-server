@@ -17,6 +17,8 @@ A Node.js backend server for handling user authentication and password reset fun
   - [Environment Variables](#environment-variables)
   - [API Endpoints](#api-endpoints)
   - [Folder Structure](#folder-structure)
+  - [postman](#postman)
+  - [https://documenter.getpostman.com/view/50347780/2sBXcGEKiD](#httpsdocumentergetpostmancomview503477802sbxcgekid)
   - [License](#license)
   - [How to Test Password Reset Flow (Optional)](#how-to-test-password-reset-flow-optional)
 
@@ -132,7 +134,10 @@ password-reset-server/
 ├── package.json
 └── README.md
 ```
+## postman
 
+URL for documentation :
+https://documenter.getpostman.com/view/50347780/2sBXcGEKiD
 ---
 
 ## License
