@@ -30,21 +30,25 @@ export const registerUser = async (req, res) => {
     const { email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      email,
+    await User.create({
+      email: email.trim(),
       password: hashedPassword,
     });
 
     res.json({ message: "Registration successful" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    console.error("Register Error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -59,17 +63,16 @@ export const forgotPassword = async (req, res) => {
 
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    //save token & expiry in DB
     user.resetToken = resetToken;
-    user.resetTokenExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+    user.resetTokenExpire = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-  
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
-    //create transporter
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -77,9 +80,9 @@ export const forgotPassword = async (req, res) => {
     });
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email, 
-      subject: "Password Reset",
+      from: `"Password Reset" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Password Reset Request",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.5;">
           <h3>Password Reset Request</h3>
@@ -92,16 +95,19 @@ export const forgotPassword = async (req, res) => {
         </div>
       `,
     });
+
     res.json({ message: "Reset email sent successfully!" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error sending reset email" });
+    console.error("Forgot Password Error:", error);
+    res.status(500).json({
+      message: "Error sending reset email",
+      error: error.message,
+    });
   }
 };
 
 export const resetPassword = async (req, res) => {
   try {
-    
     const user = await User.findOne({
       resetToken: req.params.token,
       resetTokenExpire: { $gt: Date.now() },
